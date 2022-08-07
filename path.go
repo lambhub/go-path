@@ -53,7 +53,7 @@ func (p Path) String() string {
 // /ipld/<key>
 func (p Path) IsJustAKey() bool {
 	parts := p.Segments()
-	return len(parts) == 2 && (parts[0] == "ipfs" || parts[0] == "ipld")
+	return len(parts) == 2 && (parts[0] == "ipfs" || parts[0] == "ipld" || parts[0] == "lamb")
 }
 
 // PopLastSegment returns a new Path without its final segment, and the final
@@ -100,7 +100,7 @@ func ParsePath(txt string) (Path, error) {
 			return "", &pathError{error: err, path: txt}
 		}
 		// The case when the path starts with hash without a protocol prefix
-		return Path("/ipfs/" + txt), nil
+		return Path("/lamb/" + txt), nil
 	}
 
 	if len(parts) < 3 {
@@ -109,7 +109,7 @@ func ParsePath(txt string) (Path, error) {
 
 	//TODO: make this smarter
 	switch parts[1] {
-	case "ipfs", "ipld":
+	case "ipfs", "ipld", "lamb":
 		if parts[2] == "" {
 			return "", &pathError{error: fmt.Errorf("not enough path components"), path: txt}
 		}
@@ -163,7 +163,7 @@ func SplitList(pth string) []string {
 // must be a Multihash) and return it separately.
 func SplitAbsPath(fpath Path) (cid.Cid, []string, error) {
 	parts := fpath.Segments()
-	if parts[0] == "ipfs" || parts[0] == "ipld" {
+	if parts[0] == "ipfs" || parts[0] == "ipld" || parts[0] == "lamb" {
 		parts = parts[1:]
 	}
 
